@@ -3,7 +3,7 @@ services:
   # 1) Backend Service (Express + MongoDB API)
   # ----------------------------------------------------
   - type: web
-    name: abktechs-backend
+    name: abk-backend
     env: node
     plan: free
     rootDir: backend
@@ -15,9 +15,9 @@ services:
       - key: NODE_ENV
         value: production
       - key: ALLOWED_ORIGINS
-        value: https://abktechs-frontend.onrender.com
+        value: https://abktechs.onrender.com
       - key: FRONTEND_URL
-        value: https://abktechs-frontend.onrender.com
+        value: https://abktechs.onrender.com
       - key: COOKIE_SECURE
         value: "true"
       - key: COOKIE_SAMESITE
@@ -43,7 +43,7 @@ services:
   # 2) Frontend Service (Next.js Application)
   # ----------------------------------------------------
   - type: web
-    name: abktechs-frontend
+    name: abktechs
     env: node
     plan: free
     rootDir: frontend
@@ -53,6 +53,7 @@ services:
       - key: NODE_ENV
         value: production
       - key: NEXT_PUBLIC_API_URL
-        value: https://abktechs-backend.onrender.com/api/v1
+        # This points to the backend service created above
+        value: https://abk-backend.onrender.com/api/v1
       - key: NEXT_PUBLIC_API_BASE_URL
-        value: https://abktechs-backend.onrender.com/api/v1
+        value: https://abk-backend.onrender.com/api/v1
