@@ -5,6 +5,7 @@ services:
   - type: web
     name: abk-backend
     env: node
+    plan: free
     rootDir: backend
     buildCommand: npm install
     startCommand: npm start
@@ -45,6 +46,7 @@ services:
   - type: web
     name: abk-frontend
     env: node
+    plan: free
     rootDir: frontend
     buildCommand: npm install && npm run build
     startCommand: npm start
