@@ -77,18 +77,6 @@ app.use('/api/v1/timeline', timelineRoutes)
 // Basic healthcheck
 app.get('/', (req, res) => res.send({ ok: true, env: process.env.NODE_ENV || 'development' }))
 
-// Temporary debug route (REMOVE AFTER LOGIN SUCCESS)
-app.get('/api/v1/debug-db', async (req, res) => {
-    try {
-        const User = require('./models/User');
-        const count = await User.countDocuments();
-        const users = await User.find({}, 'email role').lean();
-        res.json({ count, users });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-})
-
 // Central error handler (after routes)
 app.use(require('./middleware/error'))
 
