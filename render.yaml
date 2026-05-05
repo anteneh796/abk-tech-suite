@@ -1,0 +1,58 @@
+services:
+  # ----------------------------------------------------
+  # 1) Backend Service (Express + MongoDB API)
+  # ----------------------------------------------------
+  - type: web
+    name: abk-backend
+    env: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: PORT
+        value: 5000
+      - key: NODE_ENV
+        value: production
+      - key: ALLOWED_ORIGINS
+        # This will be replaced by the frontend URL automatically, or you can hardcode it
+        value: https://abk-frontend.onrender.com
+      - key: FRONTEND_URL
+        value: https://abk-frontend.onrender.com
+      - key: COOKIE_SECURE
+        value: "true"
+      - key: COOKIE_SAMESITE
+        value: none
+      
+      # IMPORTANT: You must manually fill these in the Render Dashboard after deployment!
+      - key: MONGO_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: JWT_ACCESS_SECRET
+        sync: false
+      - key: JWT_REFRESH_SECRET
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+
+  # ----------------------------------------------------
+  # 2) Frontend Service (Next.js Application)
+  # ----------------------------------------------------
+  - type: web
+    name: abk-frontend
+    env: node
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_PUBLIC_API_URL
+        # This points to the backend service created above
+        value: https://abk-backend.onrender.com/api/v1
+      - key: NEXT_PUBLIC_API_BASE_URL
+        value: https://abk-backend.onrender.com/api/v1
