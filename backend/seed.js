@@ -9,7 +9,7 @@ const User = require('./src/models/User');
 
 const adminUser = {
   name: "ABK Admin",
-  email: "admin@abktech.com",
+  email: "admin@abk.com",
   password: "adminpassword123", 
   role: "admin"
 };
