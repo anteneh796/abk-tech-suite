@@ -19,20 +19,14 @@ const seedDB = async () => {
     await mongoose.connect(process.env.MONGO_URI);
     console.log('Connected to MongoDB');
 
-    // Only seed if empty
-    const userCount = await User.countDocuments();
-    if (userCount > 0) {
-        console.log('Database already has data. Skipping seed to prevent overwriting production data.');
-        process.exit();
-    }
-
-    console.log('Seeding initial data...');
-    await User.create(adminUser);
+    console.log('Ensuring admin user exists...');
+    await User.findOneAndUpdate(
+        { email: adminUser.email },
+        adminUser,
+        { upsert: true, new: true }
+    );
     
-    // Add some default services/partners if needed
-    // (Omitted for brevity, but could add from previous seed file)
-
-    console.log('Admin user created: admin@abktech.com / adminpassword123');
+    console.log('Admin user ready: admin@abk.com / adminpassword123');
     console.log('Database Seeding Completed Successfully!');
     process.exit();
   } catch (err) {
