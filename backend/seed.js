@@ -20,11 +20,14 @@ const seedDB = async () => {
     console.log('Connected to MongoDB');
 
     console.log('Ensuring admin user exists...');
-    await User.findOneAndUpdate(
-        { email: adminUser.email },
-        adminUser,
-        { upsert: true, new: true }
-    );
+    const existingAdmin = await User.findOne({ email: adminUser.email });
+    if (existingAdmin) {
+        existingAdmin.password = adminUser.password;
+        await existingAdmin.save();
+    } else {
+        const newAdmin = new User(adminUser);
+        await newAdmin.save();
+    }
     
     console.log('Admin user ready: admin@abk.com / adminpassword123');
     console.log('Database Seeding Completed Successfully!');
