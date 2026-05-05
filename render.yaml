@@ -7,8 +7,8 @@ services:
     env: node
     plan: free
     rootDir: backend
-    buildCommand: npm install && node seed.js
-    startCommand: npm start
+    buildCommand: npm install
+    startCommand: node seed.js && npm start
     envVars:
       - key: PORT
         value: 5000
