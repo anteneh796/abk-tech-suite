@@ -1,3 +1,4 @@
+import React from "react"
 import { Inter, JetBrains_Mono } from "next/font/google"
 import "./globals.css"
 import { Toaster } from "@/components/ui/sonner"
@@ -36,8 +37,10 @@ export default function RootLayout({ children }) {
         <QueryProvider>
           <AuthProvider>
             <ErrorBoundary>
-              <LoadingBar />
-              <DynamicBranding />
+              <React.Suspense fallback={null}>
+                <LoadingBar />
+                <DynamicBranding />
+              </React.Suspense>
               {children}
               <Toaster />
             </ErrorBoundary>
