@@ -5,6 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
+    "predev": "powershell -Command \"try { Get-NetTCPConnection -LocalPort 5000 -ErrorAction Stop | ForEach-Object { if ($_.OwningProcess -gt 0) { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue } } } catch { }\"",
     "dev": "nodemon src/index.js",
     "test": "jest --runInBand --detectOpenHandles",
     "migrate:create-startup-indexes": "node scripts/create_startup_indexes.js",

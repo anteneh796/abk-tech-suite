@@ -1,78 +1,74 @@
 const Project = require('../models/Project');
-const cloudinary = require('../config/cloudinary');
-const streamifier = require('streamifier');
+const { uploadAndProcessImage } = require('../utils/cloudinary');
+const asyncHandler = require('../utils/asyncHandler');
+const { projectCreateSchema } = require('../validators/projectValidator');
 
-exports.list = async (req, res) => {
-  try {
-    const projects = await Project.find().sort({ createdAt: -1 });
-    res.json({ projects });
-  } catch (err) {
-    console.warn('DB error, returning mock projects', err.message);
-    res.json({ projects: [
-      { _id: '1', title: 'Solar Gondar', category: 'Solar', location: 'Gondar', description: 'Sample project' },
-      { _id: '2', title: 'Hydro Maintenance', category: 'Industrial', location: 'Oromia', description: 'Sample project' }
-    ]});
+// List projects
+exports.list = asyncHandler(async (req, res) => {
+  const projects = await Project.find().sort({ createdAt: -1 });
+  res.json({ projects });
+});
+
+// Create project
+exports.create = asyncHandler(async (req, res) => {
+  // 1. Validation
+  const parseResult = projectCreateSchema.safeParse(req.body);
+  if (!parseResult.success) {
+    console.error('[PROJECT VALIDATION FAILED]:', JSON.stringify(parseResult.error.format(), null, 2));
+    return res.status(400).json({ message: 'Validation failed', errors: parseResult.error.format() });
   }
-};
 
-exports.create = async (req, res) => {
-  try {
-    const { title, category, location, description, challenge, solution, result } = req.body;
-    let imageUrl = null;
+  const { title, category, location, description, challenge, solution, result } = parseResult.data;
+  let imageUrl = req.body.image || null;
 
-    if (req.file) {
-      const sharp = require('sharp');
-      const processed = await sharp(req.file.buffer).resize({ width: 1600 }).webp().toBuffer();
-      const upload_stream = cloudinary.uploader.upload_stream({ folder: 'abk/projects' }, async (err, reslt) => {
-        if (err) return res.status(500).json({ message: 'Upload failed' });
-        const prj = await Project.create({ title, category, location, description, challenge, solution, result, image: reslt.secure_url });
-        res.status(201).json({ project: prj });
-      });
-      streamifier.createReadStream(processed).pipe(upload_stream);
-      return;
-    }
-
-    const prj = await Project.create({ title, category, location, description, challenge, solution, result });
-    res.status(201).json({ project: prj });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Server error' });
+  // 2. Image Upload
+  if (req.file) {
+    const result = await uploadAndProcessImage(req.file.buffer, { folder: 'abk/projects' });
+    imageUrl = result.secure_url;
   }
-};
 
-exports.update = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { title, category, location, description, challenge, solution, result, image } = req.body;
-    let imageUrl = image;
+  // 3. Create
+  const project = await Project.create({ 
+    title, category, location, description, challenge, solution, result, 
+    image: imageUrl 
+  });
+  res.status(201).json({ project });
+});
 
-    if (req.file) {
-      const sharp = require('sharp');
-      const processed = await sharp(req.file.buffer).resize({ width: 1600 }).webp().toBuffer();
-      const upload_stream = cloudinary.uploader.upload_stream({ folder: 'abk/projects' }, async (err, reslt) => {
-        if (err) return res.status(500).json({ message: 'Upload failed' });
-        const updated = await Project.findByIdAndUpdate(id, { title, category, location, description, challenge, solution, result, image: reslt.secure_url }, { new: true });
-        res.json({ project: updated });
-      });
-      streamifier.createReadStream(processed).pipe(upload_stream);
-      return;
-    }
-
-    const updated = await Project.findByIdAndUpdate(id, { title, category, location, description, challenge, solution, result, image: imageUrl }, { new: true });
-    res.json({ project: updated });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Server error' });
+// Update project
+exports.update = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  
+  // Validation
+  const parseResult = projectCreateSchema.safeParse(req.body);
+  if (!parseResult.success) {
+    console.error('[PROJECT UPDATE VALIDATION FAILED]:', JSON.stringify(parseResult.error.format(), null, 2));
+    return res.status(400).json({ message: 'Validation failed', errors: parseResult.error.format() });
   }
-};
 
-exports.delete = async (req, res) => {
-  try {
-    const { id } = req.params;
-    await Project.findByIdAndDelete(id);
-    res.json({ success: true });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Server error' });
+  const { title, category, location, description, challenge, solution, result, image: existingImage } = parseResult.data;
+  let imageUrl = existingImage;
+
+  if (req.file) {
+    const result = await uploadAndProcessImage(req.file.buffer, { folder: 'abk/projects' });
+    imageUrl = result.secure_url;
   }
-};
+
+  const updated = await Project.findByIdAndUpdate(
+    id, 
+    { title, category, location, description, challenge, solution, result, image: imageUrl }, 
+    { new: true, runValidators: true }
+  );
+
+  if (!updated) return res.status(404).json({ message: 'Project not found' });
+  res.json({ project: updated });
+});
+
+// Delete project
+exports.delete = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const deleted = await Project.findByIdAndDelete(id);
+  if (!deleted) return res.status(404).json({ message: 'Project not found' });
+  res.json({ success: true, message: 'Project deleted' });
+});
+

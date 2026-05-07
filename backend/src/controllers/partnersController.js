@@ -1,41 +1,43 @@
 const Partner = require('../models/Partner');
+const asyncHandler = require('../utils/asyncHandler');
+const { partnerSchema } = require('../validators/partnerValidator');
 
-exports.list = async (req, res) => {
-  try {
-    const partners = await Partner.find().sort({ order: 1, createdAt: -1 });
-    res.json({ partners });
-  } catch (err) {
-    res.status(500).json({ message: 'Server error' });
-  }
-};
+// List partners
+exports.list = asyncHandler(async (req, res) => {
+  const partners = await Partner.find().sort({ order: 1, createdAt: -1 });
+  res.json({ partners });
+});
 
-exports.create = async (req, res) => {
-  try {
-    const { name, logo, website, order } = req.body;
-    const partner = await Partner.create({ name, logo, website, order });
-    res.status(201).json({ partner });
-  } catch (err) {
-    res.status(500).json({ message: 'Server error' });
+// Create partner
+exports.create = asyncHandler(async (req, res) => {
+  const parseResult = partnerSchema.safeParse(req.body);
+  if (!parseResult.success) {
+    return res.status(400).json({ message: 'Validation failed', errors: parseResult.error.format() });
   }
-};
 
-exports.update = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { name, logo, website, order } = req.body;
-    const partner = await Partner.findByIdAndUpdate(id, { name, logo, website, order }, { new: true });
-    res.json({ partner });
-  } catch (err) {
-    res.status(500).json({ message: 'Server error' });
-  }
-};
+  const partner = await Partner.create(parseResult.data);
+  res.status(201).json({ partner });
+});
 
-exports.delete = async (req, res) => {
-  try {
-    const { id } = req.params;
-    await Partner.findByIdAndDelete(id);
-    res.json({ success: true });
-  } catch (err) {
-    res.status(500).json({ message: 'Server error' });
+// Update partner
+exports.update = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  
+  const parseResult = partnerSchema.safeParse(req.body);
+  if (!parseResult.success) {
+    return res.status(400).json({ message: 'Validation failed', errors: parseResult.error.format() });
   }
-};
+
+  const partner = await Partner.findByIdAndUpdate(id, parseResult.data, { new: true, runValidators: true });
+  if (!partner) return res.status(404).json({ message: 'Partner not found' });
+  res.json({ partner });
+});
+
+// Delete partner
+exports.delete = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const deleted = await Partner.findByIdAndDelete(id);
+  if (!deleted) return res.status(404).json({ message: 'Partner not found' });
+  res.json({ success: true, message: 'Partner deleted' });
+});
+

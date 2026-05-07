@@ -6,18 +6,24 @@ exports.getSettings = async (req, res) => {
     const settingsMap = {};
     settings.forEach(s => { settingsMap[s.key] = s.value; });
     
-    // Fallback defaults
+    // Fallback defaults (matching client's specific branding)
     const defaults = {
-      hero_title: "Engineering Sustainable Solutions for Ethiopia",
-      hero_description: "Leading the transition to renewable energy and industrial excellence with innovative engineering and maintenance services.",
-      contact_phone: "+251 96 282 7360",
-      contact_email: "abktechnology19@gmail.com",
+      site_name: "ABK Technology",
+      site_tagline: "ENGINEERING SUSTAINABLE SOLUTIONS",
+      hero_title: "ABK Technology – Engineering Excellence",
+      hero_description: "Comprehensive, innovative, and customer-focused engineering solutions across healthcare, energy, and industrial sectors.",
+      hero_badge: "Engineering Excellence Since 2018",
+      hero_button_text: "Explore Services",
+      contact_phone: "+251 913721058",
+      contact_email: "anteneh.belay06@yahoo.com",
       contact_address: "Gondar, Ethiopia",
-      social_linkedin: "",
-      social_facebook: "",
-      social_instagram: "",
-      social_telegram: "",
-      social_youtube: ""
+      footer_description: "Engineering Sustainable Solutions for Ethiopia's Future.",
+      login_quote_text: "ABK Technologies transformed our hospital's equipment maintenance. Their response time and expertise are unmatched.",
+      login_quote_author: "Dr. Alemayehu Bekele",
+      login_quote_role: "Director, University of Gondar Hospital",
+      social_linkedin: "https://linkedin.com",
+      social_facebook: "https://facebook.com",
+      social_telegram: "https://t.me/abktech"
     };
 
     res.json({ ...defaults, ...settingsMap });

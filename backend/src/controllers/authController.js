@@ -53,15 +53,17 @@ exports.login = async (req, res) => {
     // --- EMERGENCY BYPASS REMOVED ---
     const user = await User.findOne({ email });
     if (!user) {
-      console.log(`Login failed: User not found (${email})`);
+      console.log(`[AUTH DEBUG] Login failed: User NOT FOUND for email: ${email}`);
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
     const valid = await user.comparePassword(password);
     if (!valid) {
-      console.log(`Login failed: Password mismatch for (${email})`);
+      console.log(`[AUTH DEBUG] Login failed: Password MISMATCH for email: ${email}`);
       return res.status(400).json({ message: 'Invalid credentials' });
     }
+
+    console.log(`[AUTH DEBUG] Login SUCCESS for email: ${email}`);
 
     const accessToken = signAccessToken(user);
     const refreshToken = signRefreshToken(user);
@@ -141,8 +143,8 @@ exports.logout = async (req, res) => {
       }
     }
 
-    const COOKIE_OPTIONS = getCookieOptions()
-    res.clearCookie('refreshToken', COOKIE_OPTIONS);
+    const { maxAge, ...clearOptions } = getCookieOptions();
+    res.clearCookie('refreshToken', clearOptions);
     res.json({ message: 'Logged out' });
   } catch (err) {
     console.error(err);

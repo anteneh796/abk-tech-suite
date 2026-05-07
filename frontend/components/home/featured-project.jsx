@@ -4,12 +4,11 @@ import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import Image from "next/image"
 import Link from "next/link"
-import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react"
+import { ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { api } from "@/lib/api"
 
 export function FeaturedProject() {
-  const [sliderPosition, setSliderPosition] = useState(50)
   const [project, setProject] = useState({
     title: "880KVA Generator Restoration",
     category: "Featured Impact Story",
@@ -80,57 +79,20 @@ export function FeaturedProject() {
             </Button>
           </motion.div>
 
-          {/* Before/After Slider */}
+          {/* Project Image */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="relative aspect-[4/3] rounded-xl overflow-hidden border border-border"
+            className="relative aspect-[16/10] lg:aspect-auto lg:h-[450px] rounded-2xl overflow-hidden border border-border shadow-2xl group"
           >
-            {/* After Image (Background) */}
-            <Image src={project.afterImage || project.image || "/placeholder.svg"} alt="After" fill className="object-cover" />
-
-            {/* Before Image (Foreground - clipped) */}
-            <div
-              className="absolute inset-0 overflow-hidden"
-              style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
-            >
-              <Image
-                src={project.beforeImage || project.image || "/placeholder.svg"}
-                alt="Before"
-                fill
-                className="object-cover"
-              />
-            </div>
-
-            {/* Slider Handle */}
-            <div
-              className="absolute top-0 bottom-0 w-1 bg-white cursor-ew-resize"
-              style={{ left: `${sliderPosition}%` }}
-            >
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center">
-                <ChevronLeft className="w-4 h-4 text-background absolute -left-0.5" />
-                <ChevronRight className="w-4 h-4 text-background absolute -right-0.5" />
-              </div>
-            </div>
-
-            {/* Slider Input */}
-            <input
-              type="range"
-              min="0"
-              max="100"
-              value={sliderPosition}
-              onChange={(e) => setSliderPosition(Number(e.target.value))}
-              className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize"
+            <Image 
+              src={project.image || "/placeholder.svg"} 
+              alt={project.title} 
+              fill 
+              className="object-cover group-hover:scale-105 transition-transform duration-700" 
             />
-
-            {/* Labels */}
-            <div className="absolute bottom-4 left-4 px-3 py-1 rounded-full bg-background/80 backdrop-blur text-xs font-medium">
-              Before
-            </div>
-            <div className="absolute bottom-4 right-4 px-3 py-1 rounded-full bg-background/80 backdrop-blur text-xs font-medium">
-              After
-            </div>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
           </motion.div>
         </div>
       </div>

@@ -19,9 +19,9 @@ if (allowedOriginsEnv) {
   const allowedOrigins = allowedOriginsEnv.split(',').map((s) => s.trim()).filter(Boolean)
   corsOptions = {
     origin: function (origin, callback) {
-      // allow requests with no origin (like mobile apps or server-to-server)
       if (!origin) return callback(null, true)
-      if (allowedOrigins.indexOf(origin) !== -1) return callback(null, true)
+      const isLocal = origin.includes('localhost') || origin.includes('127.0.0.1')
+      if (isLocal || allowedOrigins.indexOf(origin) !== -1) return callback(null, true)
       return callback(new Error('Not allowed by CORS'))
     },
     credentials: true,
@@ -45,8 +45,9 @@ app.use('/api/', limiter)
 
 const authLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
-  max: 10, // Limit each IP to 10 login attempts per hour
-  message: { message: 'Too many login attempts, please try again after an hour' }
+  max: process.env.NODE_ENV === 'production' ? 20 : 200, // Relaxed in dev
+  message: { message: 'Too many login attempts, please try again after an hour' },
+  skip: (req) => process.env.NODE_ENV !== 'production', // Skip entirely in dev
 });
 
 // Routes

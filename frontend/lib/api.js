@@ -1,6 +1,7 @@
 import axios from "axios"
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1"
+export const SOCKET_URL = API_BASE_URL.replace('/api/v1', '')
 
 // Create axios instance
 const apiInstance = axios.create({

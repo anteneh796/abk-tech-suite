@@ -86,7 +86,7 @@ export default function ProjectsManagement() {
   const resetForm = () => {
     setFormData({
       title: "",
-      category: "",
+      category: categoriesList[0],
       location: "",
       description: "",
       challenge: "",
@@ -168,8 +168,12 @@ export default function ProjectsManagement() {
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{editingProject ? "Edit Project" : "New Project Entry"}</DialogTitle>
+            <DialogDescription>
+              {editingProject ? "Modify the project details and case study information." : "Create a new entry for your engineering project portfolio."}
+            </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4 pt-4">
+            {/* ... rest of the form ... */}
             <div className="col-span-2 space-y-2">
                <label className="text-sm font-medium">Project Title</label>
                <Input value={formData.title} onChange={(e) => setFormData({...formData, title: e.target.value})} placeholder="Project Title" required />
@@ -226,8 +230,12 @@ export default function ProjectsManagement() {
       {/* Delete Confirm */}
       <Dialog open={!!isDeleting} onOpenChange={() => setIsDeleting(null)}>
         <DialogContent>
-          <DialogHeader><DialogTitle>Delete Project?</DialogTitle></DialogHeader>
-          <p className="text-muted-foreground">Are you sure you want to remove "{isDeleting?.title}"?</p>
+          <DialogHeader>
+            <DialogTitle>Delete Project?</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to remove "{isDeleting?.title}"? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
           <DialogFooter>
             <Button variant="secondary" onClick={() => setIsDeleting(null)}>Cancel</Button>
             <Button variant="destructive" onClick={() => deleteMutation.mutate(isDeleting._id)}>Delete</Button>

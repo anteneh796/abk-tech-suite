@@ -13,6 +13,9 @@ import { z } from "zod"
 import { toast } from "sonner"
 import { useAuth } from "@/components/providers/auth-provider"
 import { Zap, Eye, EyeOff, ArrowRight, Loader2, Settings, Wrench } from "lucide-react"
+import { useQuery } from "@tanstack/react-query"
+import { api } from "@/lib/api"
+import { useEffect } from "react"
 
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email"),
@@ -24,6 +27,11 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
   const { login } = useAuth()
+  
+  const { data: settings } = useQuery({
+    queryKey: ['settings'],
+    queryFn: () => api.getSettings(),
+  })
 
   const {
     register,
@@ -83,7 +91,7 @@ export default function LoginPage() {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" placeholder="admin@abk.com" {...register("email")} />
+              <Input id="email" type="email" placeholder="name@company.com" {...register("email")} />
               {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
             </div>
 
@@ -109,30 +117,25 @@ export default function LoginPage() {
               {errors.password && <p className="text-xs text-destructive">{errors.password.message}</p>}
             </div>
 
-            <Button type="submit" className="w-full" disabled={isLoading}>
+            <Button type="submit" className="w-full bg-[#0060A9] hover:bg-[#004e8a]" disabled={isLoading}>
               {isLoading ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Verifying...
+                  Authenticating...
                 </>
               ) : (
                 <>
-                  Enter Dashboard
+                  Secure Login
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </>
               )}
             </Button>
           </form>
 
-          {/* Demo Credentials */}
-          <div className="mt-8 p-4 rounded-lg bg-muted/50 border border-border">
-            <p className="text-xs text-muted-foreground mb-2 font-medium">Restricted Access:</p>
-            <div className="space-y-1 text-xs text-muted-foreground">
-              <p>
-                <span className="font-medium">System Admin:</span> admin@abk.com
-              </p>
-              <p className="text-[10px] mt-2 opacity-75">(Use the authorized password to proceed)</p>
-            </div>
+          <div className="mt-12 text-center">
+            <p className="text-xs text-muted-foreground">
+              &copy; {new Date().getFullYear()} ABK Technologies. All rights reserved.
+            </p>
           </div>
         </motion.div>
       </div>
@@ -147,15 +150,16 @@ export default function LoginPage() {
         />
         <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-transparent" />
         <div className="absolute bottom-12 left-12 right-12">
-          <blockquote className="text-lg font-medium mb-4">
-            "ABK Technologies transformed our hospital's equipment maintenance. Their response time and expertise are
-            unmatched."
+          <blockquote className="text-lg font-medium mb-4 italic">
+            "{settings?.login_quote_text || "ABK Technologies transformed our hospital's equipment maintenance. Their response time and expertise are unmatched."}"
           </blockquote>
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-primary/20" />
+            <div className="w-10 h-10 rounded-full bg-[#0060A9]/20 flex items-center justify-center font-bold text-[#0060A9]">
+              {settings?.login_quote_author?.[0] || "A"}
+            </div>
             <div>
-              <p className="font-medium">Dr. Alemayehu Bekele</p>
-              <p className="text-sm text-muted-foreground">Director, University of Gondar Hospital</p>
+              <p className="font-medium">{settings?.login_quote_author || "Dr. Alemayehu Bekele"}</p>
+              <p className="text-sm text-muted-foreground">{settings?.login_quote_role || "Director, University of Gondar Hospital"}</p>
             </div>
           </div>
         </div>

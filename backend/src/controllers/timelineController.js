@@ -1,41 +1,33 @@
 const TimelineItem = require('../models/TimelineItem');
+const asyncHandler = require('../utils/asyncHandler');
 
-exports.list = async (req, res) => {
-  try {
-    const items = await TimelineItem.find().sort({ order: 1, year: 1 });
-    res.json({ items });
-  } catch (err) {
-    res.status(500).json({ message: 'Server error' });
-  }
-};
+// List items
+exports.list = asyncHandler(async (req, res) => {
+  const items = await TimelineItem.find().sort({ order: 1, year: 1 });
+  res.json({ items });
+});
 
-exports.create = async (req, res) => {
-  try {
-    const { year, title, description, order } = req.body;
-    const item = await TimelineItem.create({ year, title, description, order });
-    res.status(201).json({ item });
-  } catch (err) {
-    res.status(500).json({ message: 'Server error' });
-  }
-};
+// Create item
+exports.create = asyncHandler(async (req, res) => {
+  const { year, title, description, order } = req.body;
+  const item = await TimelineItem.create({ year, title, description, order });
+  res.status(201).json({ item });
+});
 
-exports.update = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { year, title, description, order } = req.body;
-    const item = await TimelineItem.findByIdAndUpdate(id, { year, title, description, order }, { new: true });
-    res.json({ item });
-  } catch (err) {
-    res.status(500).json({ message: 'Server error' });
-  }
-};
+// Update item
+exports.update = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { year, title, description, order } = req.body;
+  const item = await TimelineItem.findByIdAndUpdate(id, { year, title, description, order }, { new: true, runValidators: true });
+  if (!item) return res.status(404).json({ message: 'Timeline item not found' });
+  res.json({ item });
+});
 
-exports.delete = async (req, res) => {
-  try {
-    const { id } = req.params;
-    await TimelineItem.findByIdAndDelete(id);
-    res.json({ success: true });
-  } catch (err) {
-    res.status(500).json({ message: 'Server error' });
-  }
-};
+// Delete item
+exports.delete = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const deleted = await TimelineItem.findByIdAndDelete(id);
+  if (!deleted) return res.status(404).json({ message: 'Timeline item not found' });
+  res.json({ success: true, message: 'Timeline item deleted' });
+});
+

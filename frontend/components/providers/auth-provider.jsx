@@ -1,7 +1,7 @@
 "use client"
 
 import { createContext, useContext, useState, useEffect } from "react"
-import { api } from "@/lib/api"
+import { api, SOCKET_URL } from "@/lib/api"
 
 const AuthContext = createContext(null)
 
@@ -99,10 +99,6 @@ export function AuthProvider({ children }) {
   // Socket initialization
   useEffect(() => {
     if (user && typeof window !== 'undefined') {
-      const SOCKET_URL = process.env.NEXT_PUBLIC_API_URL
-        ? process.env.NEXT_PUBLIC_API_URL.replace('/api/v1', '')
-        : 'http://localhost:5000';
-
       const newSocket = require('socket.io-client').io(SOCKET_URL, { withCredentials: true });
 
       newSocket.on('connect', () => {

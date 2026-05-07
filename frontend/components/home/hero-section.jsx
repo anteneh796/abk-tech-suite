@@ -19,7 +19,8 @@ export function HeroSection() {
       if (res) setSettings({ 
         hero_title: res.hero_title || settings.hero_title,
         hero_description: res.hero_description || settings.hero_description,
-        hero_button_text: res.hero_button_text || settings.hero_button_text
+        hero_button_text: res.hero_button_text || settings.hero_button_text,
+        hero_badge: res.hero_badge || "Engineering Excellence Since 2018"
       })
     }).catch(console.warn)
   }, [])
@@ -41,7 +42,7 @@ export function HeroSection() {
         <div className="max-w-4xl mx-auto text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
             <span className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
-              Engineering Excellence Since 2018
+              {settings.hero_badge}
             </span>
           </motion.div>
 

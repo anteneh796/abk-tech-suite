@@ -89,6 +89,22 @@ export function Footer() {
                 </a>
               </div>
             </div>
+
+            {/* Social Icons moved here */}
+            <div className="mt-8 flex items-center gap-4">
+              {socials.map((social) => (
+                <a 
+                  key={social.label}
+                  href={social.href} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-primary-foreground transition-all duration-300" 
+                  aria-label={social.label}
+                >
+                  <social.icon className="w-5 h-5" />
+                </a>
+              ))}
+            </div>
           </div>
 
           {/* Links */}
@@ -146,19 +162,12 @@ export function Footer() {
           <p className="text-sm text-muted-foreground">
             {settings?.footer_copyright || `© ${new Date().getFullYear()} ABK Technologies. All rights reserved.`}
           </p>
-          <div className="flex items-center gap-4">
-            {socials.map((social) => (
-              <a 
-                key={social.label}
-                href={social.href} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-foreground transition-colors" 
-                aria-label={social.label}
-              >
-                <social.icon className="w-5 h-5" />
-              </a>
-            ))}
+          <div className="flex flex-col md:flex-row items-center gap-6">
+            <div className="text-[11px] text-muted-foreground/60 uppercase tracking-wider">
+              Developed by <a href="https://t.me/Mira_cle19" target="_blank" rel="noopener noreferrer" className="font-bold text-foreground hover:text-[#0060A9] transition-colors">Miraዥ</a> 
+              <span className="mx-2">|</span>
+              <a href="tel:+251962827360" className="hover:text-foreground transition-colors">+251 96 282 7360</a>
+            </div>
           </div>
         </div>
       </div>

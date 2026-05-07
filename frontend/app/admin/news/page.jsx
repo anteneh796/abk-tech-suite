@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge"
 import { Calendar, Trash2, Plus, Loader2, Image as ImageIcon, Edit2, X, Check } from "lucide-react"
 import { toast } from "sonner"
 import { format } from "date-fns"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -19,6 +19,7 @@ export default function NewsManagement() {
   const queryClient = useQueryClient()
   const [editingItem, setEditingItem] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(null)
 
   // Form State
   const [formData, setFormData] = useState({
@@ -146,7 +147,7 @@ export default function NewsManagement() {
                         variant="ghost" 
                         size="icon" 
                         className="text-destructive hover:bg-destructive/10"
-                        onClick={() => { if(confirm("Delete this item?")) deleteMutation.mutate(item._id) }}
+                        onClick={() => setIsDeleting(item)}
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>
@@ -171,6 +172,9 @@ export default function NewsManagement() {
         <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{editingItem ? "Edit Item" : "Add New Item"}</DialogTitle>
+            <DialogDescription>
+              {editingItem ? "Update the details for this news or event entry." : "Post a new announcement or upcoming event to the platform."}
+            </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4 pt-4">
             <div className="space-y-2">
@@ -236,6 +240,24 @@ export default function NewsManagement() {
               </Button>
             </div>
           </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirm Modal */}
+      <Dialog open={!!isDeleting} onOpenChange={() => setIsDeleting(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Are you sure?</DialogTitle>
+            <DialogDescription>
+              This will permanently delete the item "{isDeleting?.title}". This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex gap-3 pt-4">
+             <Button variant="outline" className="flex-1" onClick={() => setIsDeleting(null)}>Cancel</Button>
+             <Button variant="destructive" className="flex-1" onClick={() => deleteMutation.mutate(isDeleting._id)} disabled={deleteMutation.isPending}>
+                {deleteMutation.isPending ? <Loader2 className="animate-spin w-4 h-4" /> : "Delete"}
+             </Button>
+          </div>
         </DialogContent>
       </Dialog>
     </div>

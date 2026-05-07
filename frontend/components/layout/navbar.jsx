@@ -4,7 +4,7 @@ import { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
-import { Menu, X, ChevronDown, Sun, Clock, Phone, Send, MessageCircle, Linkedin, Settings, Wrench, Zap, Facebook, Instagram, Youtube } from "lucide-react"
+import { Menu, X, ChevronDown, Sun, Clock, Phone, Send, MessageCircle, Linkedin, Settings, Wrench, Zap, Facebook, Instagram, Youtube, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/components/providers/auth-provider"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
@@ -188,26 +188,70 @@ export function Navbar() {
           <AnimatePresence>
             {isMobileMenuOpen && (
               <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                className="lg:hidden border-t border-border bg-card"
+                initial={{ opacity: 0, x: "100%" }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: "100%" }}
+                transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                className="fixed inset-0 z-[60] bg-background lg:hidden flex flex-col"
               >
-                <div className="py-4 space-y-2">
-                  {navLinks.map((link) => (
-                    <Link
-                      key={link.href}
-                      href={link.href}
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className={`block px-4 py-2 text-sm font-bold uppercase tracking-widest ${
-                        isActive(link.href) ? "text-primary bg-primary/5" : "text-muted-foreground"
-                      }`}
-                    >
-                      {link.label}
-                    </Link>
-                  ))}
-                  <div className="pt-4 border-t border-border">
+                {/* Mobile Menu Header */}
+                <div className="flex items-center justify-between p-4 border-b border-border">
+                  <div className="flex items-center gap-2">
+                    <Settings className="w-8 h-8 text-[#0060A9]" />
+                    <span className="font-bold text-xl tracking-tighter">ABK MENU</span>
                   </div>
+                  <button
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="p-2 rounded-full bg-accent/10 text-primary"
+                  >
+                    <X className="w-6 h-6" />
+                  </button>
+                </div>
+
+                {/* Navigation Links */}
+                <div className="flex-1 overflow-y-auto py-8 px-6 space-y-6">
+                  {navLinks.map((link, index) => (
+                    <motion.div
+                      key={link.href}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                    >
+                      <Link
+                        href={link.href}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className={`text-2xl font-black uppercase tracking-tighter flex items-center justify-between group ${
+                          isActive(link.href) ? "text-[#0060A9]" : "text-foreground"
+                        }`}
+                      >
+                        {link.label}
+                        <ArrowRight className={`w-6 h-6 transition-transform ${isActive(link.href) ? "translate-x-0" : "-translate-x-4 opacity-0 group-hover:translate-x-0 group-hover:opacity-100"}`} />
+                      </Link>
+                    </motion.div>
+                  ))}
+                </div>
+
+                {/* Mobile Menu Footer */}
+                <div className="p-8 bg-accent/5 border-t border-border space-y-6">
+                   <div className="space-y-4">
+                      <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Connect with us</p>
+                      <div className="flex gap-4">
+                        {socials.map((social) => (
+                          <a 
+                            key={social.label} 
+                            href={social.href} 
+                            className="p-3 rounded-xl bg-background border border-border text-primary hover:bg-primary hover:text-white transition-colors"
+                          >
+                            <social.icon className="w-5 h-5" />
+                          </a>
+                        ))}
+                      </div>
+                   </div>
+                   <Button asChild className="w-full h-14 text-lg font-bold bg-[#0060A9]">
+                      <Link href="/contact" onClick={() => setIsMobileMenuOpen(false)}>
+                        GET A QUOTE
+                      </Link>
+                   </Button>
                 </div>
               </motion.div>
             )}

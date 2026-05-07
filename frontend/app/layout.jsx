@@ -3,6 +3,7 @@ import "./globals.css"
 import { Toaster } from "@/components/ui/sonner"
 import { QueryProvider } from "@/components/providers/query-provider"
 import { AuthProvider } from "@/components/providers/auth-provider"
+import { ErrorBoundary } from "@/components/providers/error-boundary"
 import { DynamicBranding } from "@/components/layout/dynamic-branding"
 
 const inter = Inter({ subsets: ["latin"] })
@@ -26,15 +27,20 @@ export const viewport = {
   themeColor: "#0a0a0a",
 }
 
+import { LoadingBar } from "@/components/layout/loading-bar"
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${inter.className} ${jetbrainsMono.variable}`}>
         <QueryProvider>
           <AuthProvider>
-            <DynamicBranding />
-            {children}
-            <Toaster />
+            <ErrorBoundary>
+              <LoadingBar />
+              <DynamicBranding />
+              {children}
+              <Toaster />
+            </ErrorBoundary>
           </AuthProvider>
         </QueryProvider>
       </body>

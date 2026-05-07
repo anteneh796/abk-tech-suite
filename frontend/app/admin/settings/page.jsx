@@ -100,6 +100,7 @@ export default function SettingsPage() {
           <TabsTrigger value="contact" className="gap-2"><Phone className="w-4 h-4" /> Contact</TabsTrigger>
           <TabsTrigger value="homepage" className="gap-2"><Layout className="w-4 h-4" /> Homepage</TabsTrigger>
           <TabsTrigger value="socials" className="gap-2"><Share2 className="w-4 h-4" /> Socials</TabsTrigger>
+          <TabsTrigger value="marketing" className="gap-2"><Users className="w-4 h-4" /> Marketing</TabsTrigger>
           <TabsTrigger value="about" className="gap-2"><Users className="w-4 h-4" /> About Us</TabsTrigger>
           <TabsTrigger value="footer" className="gap-2"><ImageIcon className="w-4 h-4" /> Branding & Footer</TabsTrigger>
           <TabsTrigger value="account" className="gap-2"><Shield className="w-4 h-4" /> Account</TabsTrigger>
@@ -223,6 +224,10 @@ export default function SettingsPage() {
                   <Label>Hero Button Text</Label>
                   <Input name="hero_button_text" defaultValue={settings?.hero_button_text || "Get Started"} />
                 </div>
+                <div className="space-y-2">
+                  <Label>Hero Badge Text (Above Title)</Label>
+                  <Input name="hero_badge" defaultValue={settings?.hero_badge || "Engineering Excellence Since 2018"} />
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
@@ -249,6 +254,31 @@ export default function SettingsPage() {
                 <div className="space-y-2">
                   <Label className="flex items-center gap-2"><Instagram className="w-4 h-4 text-pink-600" /> Instagram</Label>
                   <Input name="social_instagram" defaultValue={settings?.social_instagram} placeholder="https://instagram.com/..." />
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="marketing" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Login Page Testimonial</CardTitle>
+                <CardDescription>The quote shown on the login screen</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Quote Text</Label>
+                  <Textarea name="login_quote_text" defaultValue={settings?.login_quote_text} rows={3} />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Author Name</Label>
+                    <Input name="login_quote_author" defaultValue={settings?.login_quote_author} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Author Role/Company</Label>
+                    <Input name="login_quote_role" defaultValue={settings?.login_quote_role} />
+                  </div>
                 </div>
               </CardContent>
             </Card>

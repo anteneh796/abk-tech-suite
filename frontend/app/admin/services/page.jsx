@@ -197,8 +197,12 @@ export default function ServicesManagement() {
       {/* Delete Confirm */}
       <Dialog open={!!isDeleting} onOpenChange={() => setIsDeleting(null)}>
         <DialogContent>
-          <DialogHeader><DialogTitle>Are you absolutely sure?</DialogTitle></DialogHeader>
-          <p className="text-muted-foreground">This will permanently delete the service "{isDeleting?.title}".</p>
+          <DialogHeader>
+            <DialogTitle>Are you absolutely sure?</DialogTitle>
+            <DialogDescription>
+              This action cannot be undone. This will permanently delete the service "{isDeleting?.title}".
+            </DialogDescription>
+          </DialogHeader>
           <DialogFooter>
             <Button variant="secondary" onClick={() => setIsDeleting(null)}>Cancel</Button>
             <Button variant="destructive" onClick={() => deleteMutation.mutate(isDeleting._id)} disabled={deleteMutation.isPending}>Delete</Button>
