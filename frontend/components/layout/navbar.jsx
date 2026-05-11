@@ -63,12 +63,12 @@ export function Navbar() {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 flex flex-col">
       {/* Top Bar */}
-      <div className="bg-accent py-2 px-4 lg:px-8 border-b border-accent/20 hidden sm:block">
-        <div className="container mx-auto flex flex-col md:flex-row items-center justify-between gap-2">
+      <div className="bg-accent py-2 px-4 lg:px-8 border-b border-accent/20 block">
+        <div className="container mx-auto flex items-center justify-between gap-2">
           <div className="flex items-center gap-4 text-[13px] font-medium text-accent-foreground">
             <div className="flex items-center gap-1.5 border-r border-accent-foreground/10 pr-4">
               <Clock className="w-4 h-4" />
-              <span>Monday - Friday 08:00 AM - 05:00 PM</span>
+              <span className="hidden md:inline">Monday - Friday 08:00 AM - 05:00 PM</span>
             </div>
             <div className="flex items-center gap-1.5">
               <Phone className="w-4 h-4" />
@@ -78,7 +78,7 @@ export function Navbar() {
             </div>
           </div>
           <div className="flex items-center gap-4 text-[13px] font-medium text-accent-foreground">
-            <span>Follow Us -</span>
+            <span className="hidden sm:inline">Follow Us -</span>
             <div className="flex items-center gap-3">
               {socials.map((social) => (
                 <a 
